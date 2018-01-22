@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sokudo.Api", "Sokudo.Api\Sokudo.Api.csproj", "{B6CEBCD0-0FBC-4D13-ACC1-BCB60C2B09A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sokudo.Domain", "Sokudo.Domain\Sokudo.Domain.csproj", "{9C4F840C-27F7-443E-8505-DD6868759338}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sokudo.Domain", "Sokudo.Domain\Sokudo.Domain.csproj", "{9C4F840C-27F7-443E-8505-DD6868759338}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
