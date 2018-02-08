@@ -15,8 +15,8 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
+    using Sokudo.DataAccess.Context;
+    using Microsoft.EntityFrameworkCore;
 
     /// <summary>
     /// The main start-up class for the application.
@@ -112,6 +112,8 @@
         /// </summary>
         public IServiceProvider ConfigureServices(IServiceCollection services) =>
             services
+                .AddDbContext<SokudoContext>(options =>
+                    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")))
                 .AddCaching()
                 .AddCustomOptions(this.configuration)
                 .AddCustomRouting()
