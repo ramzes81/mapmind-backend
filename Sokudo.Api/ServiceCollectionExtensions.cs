@@ -4,13 +4,11 @@
     using System.IO.Compression;
     using System.Linq;
     using System.Reflection;
-    using Sokudo.Api.Commands;
     using Sokudo.Api.Constants;
     using Sokudo.Api.OperationFilters;
     using Sokudo.Api.Repositories;
     using Sokudo.Api.Services;
     using Sokudo.Api.Settings;
-    using Sokudo.Api.Translators;
     using Sokudo.Api.ViewModels;
     using Boilerplate;
     using Boilerplate.AspNetCore;
@@ -227,43 +225,11 @@
                 });
 
         /// <summary>
-        /// Adds project commands.
-        /// </summary>
-        /// <remarks>
-        /// AddSingleton - Only one instance is ever created and returned.
-        /// AddScoped - A new instance is created and returned for each request/response cycle.
-        /// AddTransient - A new instance is created and returned each time.
-        /// </remarks>
-        public static IServiceCollection AddCommands(this IServiceCollection services) =>
-            services
-                .AddScoped<IDeleteCarCommand, DeleteCarCommand>()
-                .AddScoped(x => new Lazy<IDeleteCarCommand>(() => x.GetRequiredService<IDeleteCarCommand>()))
-                .AddScoped<IGetCarCommand, GetCarCommand>()
-                .AddScoped(x => new Lazy<IGetCarCommand>(() => x.GetRequiredService<IGetCarCommand>()))
-                .AddScoped<IGetCarPageCommand, GetCarPageCommand>()
-                .AddScoped(x => new Lazy<IGetCarPageCommand>(() => x.GetRequiredService<IGetCarPageCommand>()))
-                .AddScoped<IPatchCarCommand, PatchCarCommand>()
-                .AddScoped(x => new Lazy<IPatchCarCommand>(() => x.GetRequiredService<IPatchCarCommand>()))
-                .AddScoped<IPostCarCommand, PostCarCommand>()
-                .AddScoped(x => new Lazy<IPostCarCommand>(() => x.GetRequiredService<IPostCarCommand>()))
-                .AddScoped<IPutCarCommand, PutCarCommand>()
-                .AddScoped(x => new Lazy<IPutCarCommand>(() => x.GetRequiredService<IPutCarCommand>()));
-
-        /// <summary>
         /// Adds project repositories.
         /// </summary>
         public static IServiceCollection AddRepositories(this IServiceCollection services) =>
             services
                 .AddScoped<ICarRepository, CarRepository>();
-
-        /// <summary>
-        /// Adds project translators.
-        /// </summary>
-        public static IServiceCollection AddTranslators(this IServiceCollection services) =>
-            services
-                .AddSingleton<ITranslator<Models.Car, Car>, CarToCarTranslator>()
-                .AddSingleton<ITranslator<Models.Car, SaveCar>, CarToSaveCarTranslator>()
-                .AddSingleton<ITranslator<SaveCar, Models.Car>, CarToSaveCarTranslator>();
 
         /// <summary>
         /// Adds project services.

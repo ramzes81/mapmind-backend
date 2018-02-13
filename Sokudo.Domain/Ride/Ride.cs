@@ -1,7 +1,6 @@
-﻿using Sokudo.Domain.Profiles;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Sokudo.Domain.Profiles;
 
 namespace Sokudo.Domain.Ride
 {
@@ -17,6 +16,5 @@ namespace Sokudo.Domain.Ride
 
     public enum RideStatus
     {
-
     }
 }

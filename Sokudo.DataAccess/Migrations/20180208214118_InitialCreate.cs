@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using System;
-using System.Collections.Generic;
 
 namespace Sokudo.DataAccess.Migrations
 {
@@ -10,22 +9,19 @@ namespace Sokudo.DataAccess.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Roles",
-                columns: table => new
+                "Roles",
+                table => new
                 {
                     Id = table.Column<string>(nullable: false),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
                     Name = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(maxLength: 256, nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Roles", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
+                "Users",
+                table => new
                 {
                     Id = table.Column<string>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
@@ -45,17 +41,15 @@ namespace Sokudo.DataAccess.Migrations
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     UserName = table.Column<string>(maxLength: 256, nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Users", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "RoleClaims",
-                columns: table => new
+                "RoleClaims",
+                table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:ValueGenerationStrategy",
+                            SqlServerValueGenerationStrategy.IdentityColumn),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true),
                     RoleId = table.Column<string>(nullable: false)
@@ -64,19 +58,20 @@ namespace Sokudo.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_RoleClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RoleClaims_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
-                        principalColumn: "Id",
+                        "FK_RoleClaims_Roles_RoleId",
+                        x => x.RoleId,
+                        "Roles",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserClaims",
-                columns: table => new
+                "UserClaims",
+                table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:ValueGenerationStrategy",
+                            SqlServerValueGenerationStrategy.IdentityColumn),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true),
                     UserId = table.Column<string>(nullable: false)
@@ -85,16 +80,16 @@ namespace Sokudo.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_UserClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserClaims_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
+                        "FK_UserClaims_Users_UserId",
+                        x => x.UserId,
+                        "Users",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserLogins",
-                columns: table => new
+                "UserLogins",
+                table => new
                 {
                     LoginProvider = table.Column<string>(nullable: false),
                     ProviderKey = table.Column<string>(nullable: false),
@@ -103,42 +98,42 @@ namespace Sokudo.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.PrimaryKey("PK_UserLogins", x => new {x.LoginProvider, x.ProviderKey});
                     table.ForeignKey(
-                        name: "FK_UserLogins_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
+                        "FK_UserLogins_Users_UserId",
+                        x => x.UserId,
+                        "Users",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserRoles",
-                columns: table => new
+                "UserRoles",
+                table => new
                 {
                     UserId = table.Column<string>(nullable: false),
                     RoleId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId });
+                    table.PrimaryKey("PK_UserRoles", x => new {x.UserId, x.RoleId});
                     table.ForeignKey(
-                        name: "FK_UserRoles_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
-                        principalColumn: "Id",
+                        "FK_UserRoles_Roles_RoleId",
+                        x => x.RoleId,
+                        "Roles",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserRoles_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
+                        "FK_UserRoles_Users_UserId",
+                        x => x.UserId,
+                        "Users",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserTokens",
-                columns: table => new
+                "UserTokens",
+                table => new
                 {
                     UserId = table.Column<string>(nullable: false),
                     LoginProvider = table.Column<string>(nullable: false),
@@ -147,51 +142,51 @@ namespace Sokudo.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.PrimaryKey("PK_UserTokens", x => new {x.UserId, x.LoginProvider, x.Name});
                     table.ForeignKey(
-                        name: "FK_UserTokens_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
+                        "FK_UserTokens_Users_UserId",
+                        x => x.UserId,
+                        "Users",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_RoleClaims_RoleId",
-                table: "RoleClaims",
-                column: "RoleId");
+                "IX_RoleClaims_RoleId",
+                "RoleClaims",
+                "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "RoleNameIndex",
-                table: "Roles",
-                column: "NormalizedName",
+                "RoleNameIndex",
+                "Roles",
+                "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserClaims_UserId",
-                table: "UserClaims",
-                column: "UserId");
+                "IX_UserClaims_UserId",
+                "UserClaims",
+                "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserLogins_UserId",
-                table: "UserLogins",
-                column: "UserId");
+                "IX_UserLogins_UserId",
+                "UserLogins",
+                "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserRoles_RoleId",
-                table: "UserRoles",
-                column: "RoleId");
+                "IX_UserRoles_RoleId",
+                "UserRoles",
+                "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "EmailIndex",
-                table: "Users",
-                column: "NormalizedEmail");
+                "EmailIndex",
+                "Users",
+                "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "UserNameIndex",
-                table: "Users",
-                column: "NormalizedUserName",
+                "UserNameIndex",
+                "Users",
+                "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
         }
@@ -199,25 +194,25 @@ namespace Sokudo.DataAccess.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "RoleClaims");
+                "RoleClaims");
 
             migrationBuilder.DropTable(
-                name: "UserClaims");
+                "UserClaims");
 
             migrationBuilder.DropTable(
-                name: "UserLogins");
+                "UserLogins");
 
             migrationBuilder.DropTable(
-                name: "UserRoles");
+                "UserRoles");
 
             migrationBuilder.DropTable(
-                name: "UserTokens");
+                "UserTokens");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                "Roles");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                "Users");
         }
     }
 }

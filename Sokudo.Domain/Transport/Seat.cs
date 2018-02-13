@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Sokudo.Domain.Transport
+﻿namespace Sokudo.Domain.Transport
 {
     public class Seat
     {

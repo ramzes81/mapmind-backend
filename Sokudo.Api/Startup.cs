@@ -140,10 +140,8 @@
                 .AddVersionedApiExplorer()
                 .AddCustomMvcOptions(this.configuration, this.hostingEnvironment)
                 .Services
-                .AddCommands()
                 .AddRepositories()
                 .AddServices()
-                .AddTranslators()
                 .BuildServiceProvider();
 
         /// <summary>
@@ -168,7 +166,6 @@
                         .UseDeveloperErrorPages())
                 .UseStrictTransportSecurityHttpHeader()
                 .UseMvc()
-                .UseApiVersioning()
                 .UseSwagger()
                 .UseSwaggerUI(
                     options =>

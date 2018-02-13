@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Sokudo.Domain.Transport
+﻿namespace Sokudo.Domain.Transport
 {
     public class TransportDefinition
     {
@@ -11,6 +7,6 @@ namespace Sokudo.Domain.Transport
 
     public enum TransportType
     {
-        Car,
+        Car
     }
 }

@@ -1,4 +1,4 @@
-﻿{
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -25,6 +25,15 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
+    "dotnet run (net461)": {
+      "commandName": "Project",
+      "commandLineArgs": "--framework net461 --urls http://*:1025;https://*:44300",
+      "launchBrowser": true,
+      "launchUrl": "https://localhost:44300/",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
     "dotnet watch run (netcoreapp1.1)": {
       "executablePath": "C:\\Program Files\\dotnet\\dotnet.exe",
       "commandLineArgs": "watch run --framework netcoreapp1.1 --urls http://*:1025;https://*:44300",
@@ -34,5 +43,14 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
+    "dotnet watch run (net461)": {
+      "executablePath": "C:\\Program Files\\dotnet\\dotnet.exe",
+      "commandLineArgs": "watch run --framework net461 --urls http://*:1025;https://*:44300",
+      "launchBrowser": true,
+      "launchUrl": "https://localhost:44300/",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
   }
 }

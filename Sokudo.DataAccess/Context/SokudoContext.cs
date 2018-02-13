@@ -5,9 +5,11 @@ using Sokudo.Domain.Authentication;
 
 namespace Sokudo.DataAccess.Context
 {
-    public class SokudoContext: IdentityDbContext<User>
+    public class SokudoContext : IdentityDbContext<User>
     {
-        public SokudoContext(DbContextOptions<SokudoContext> options) : base(options) { }
+        public SokudoContext(DbContextOptions<SokudoContext> options) : base(options)
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

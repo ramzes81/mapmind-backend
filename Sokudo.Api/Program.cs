@@ -1,4 +1,6 @@
-﻿namespace Sokudo.Api
+﻿using System.Net;
+
+namespace Sokudo.Api
 {
     using System.IO;
     using System.Linq;
@@ -39,7 +41,8 @@
                         {
                             // Use a self-signed certificate to enable 'dotnet run' to work in development.
                             // This will give a browser security warning which you can safely ignore.
-                            options.UseHttps("DevelopmentCertificate.pfx", "password");
+                            //options.Listen(IPAddress.Any, 443, listenOptions => listenOptions.UseHttps("DevelopmentCertificate.pfx", "password"));
+                            
                         }
                     })
                 .UseIISIntegration()

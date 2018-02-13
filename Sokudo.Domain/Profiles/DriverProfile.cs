@@ -1,7 +1,5 @@
-﻿using Sokudo.Domain.Transport;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using Sokudo.Domain.Transport;
 
 namespace Sokudo.Domain.Profiles
 {
