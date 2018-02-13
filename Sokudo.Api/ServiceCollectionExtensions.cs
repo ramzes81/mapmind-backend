@@ -30,6 +30,8 @@
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using Swashbuckle.AspNetCore.Swagger;
+    using Sokudo.Email.Options;
+    using Sokudo.Email.Service;
 
     public static partial class ServiceCollectionExtensions
     {
@@ -236,6 +238,11 @@
         /// </summary>
         public static IServiceCollection AddServices(this IServiceCollection services) =>
             services
-                .AddSingleton<IClockService, ClockService>();
+                .AddSingleton<IClockService, ClockService>()
+                .AddSingleton<IEmailSender, EmailSender>()
+                .AddSingleton<IEmailService, EmailService>();
+
+        public static IServiceCollection AddOptions(this IServiceCollection services, IConfigurationRoot configuration) =>
+            services.Configure<AuthMessageSenderOptions>(configuration);
     }
 }

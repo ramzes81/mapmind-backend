@@ -17,6 +17,8 @@
     using Microsoft.Extensions.Logging;
     using Sokudo.DataAccess.Context;
     using Microsoft.EntityFrameworkCore;
+    using Sokudo.Domain.Authentication;
+    using Microsoft.AspNetCore.Identity;
 
     /// <summary>
     /// The main start-up class for the application.
@@ -138,12 +140,19 @@
                 .AddCustomJsonOptions()
                 .AddCustomCors()
                 .AddVersionedApiExplorer()
-                .AddCustomMvcOptions(this.configuration, this.hostingEnvironment)
+                .AddCustomMvcOptions(configuration, hostingEnvironment)
                 .Services
                 .AddRepositories()
                 .AddServices()
+                .AddIdentity<User, IdentityRole>(config =>
+                {
+                    config.SignIn.RequireConfirmedEmail = true;
+                })
+                .AddEntityFrameworkStores<SokudoContext>()
+                .AddDefaultTokenProviders()
+                .Services
                 .BuildServiceProvider();
-
+            
         /// <summary>
         /// Configures the application and HTTP request pipeline. Configure is called after ConfigureServices is
         /// called by the ASP.NET runtime.

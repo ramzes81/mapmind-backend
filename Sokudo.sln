@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sokudo.Api", "Sokudo.Api\So
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sokudo.Domain", "Sokudo.Domain\Sokudo.Domain.csproj", "{9C4F840C-27F7-443E-8505-DD6868759338}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sokudo.DataAccess", "Sokudo.DataAccess\Sokudo.DataAccess.csproj", "{B28F4696-2C60-4DC1-AE1B-1880878297E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sokudo.DataAccess", "Sokudo.DataAccess\Sokudo.DataAccess.csproj", "{B28F4696-2C60-4DC1-AE1B-1880878297E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sokudo.Email", "Sokudo.Email\Sokudo.Email.csproj", "{54646DDA-4795-430C-AAB1-95009D40E213}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{B28F4696-2C60-4DC1-AE1B-1880878297E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B28F4696-2C60-4DC1-AE1B-1880878297E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B28F4696-2C60-4DC1-AE1B-1880878297E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54646DDA-4795-430C-AAB1-95009D40E213}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54646DDA-4795-430C-AAB1-95009D40E213}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54646DDA-4795-430C-AAB1-95009D40E213}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54646DDA-4795-430C-AAB1-95009D40E213}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sokudo.DataAccess\Sokudo.DataAccess.csproj" />
+    <ProjectReference Include="..\Sokudo.Email\Sokudo.Email.csproj" />
   </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
