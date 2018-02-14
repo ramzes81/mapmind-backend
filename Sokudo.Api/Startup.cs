@@ -119,6 +119,10 @@
                 .AddCaching()
                 .AddCustomOptions(this.configuration)
                 .AddCustomRouting()
+                .AddCors(options =>
+                {
+                    options.AddPolicy(CorsPolicyName.AllowAny, corsBuilder => corsBuilder.AllowAnyOrigin());
+                })
                 .AddResponseCaching()
                 .AddCustomResponseCompression(this.configuration)
                 .AddSwagger()
@@ -138,7 +142,6 @@
                 .AddDataAnnotations()
                 .AddJsonFormatters()
                 .AddCustomJsonOptions()
-                .AddCustomCors()
                 .AddVersionedApiExplorer()
                 .AddCustomMvcOptions(configuration, hostingEnvironment)
                 .Services
@@ -167,7 +170,7 @@
                 .UseResponseCaching()
                 .UseResponseCompression()
                 .UseStaticFilesWithCacheControl(this.configuration)
-                .UseCors(CorsPolicyName.AllowAny)
+                .UseCors(builder => builder.AllowAnyOrigin())
                 .UseIf(
                     this.hostingEnvironment.IsDevelopment(),
                     x => x
