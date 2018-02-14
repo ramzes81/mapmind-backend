@@ -76,7 +76,8 @@
             IConfiguration configuration) =>
             services
                 // Adds IOptions<CacheProfileSettings> to the services container.
-                .Configure<CacheProfileSettings>(configuration.GetSection(nameof(CacheProfileSettings)));
+                .Configure<CacheProfileSettings>(configuration.GetSection(nameof(CacheProfileSettings)))
+                .Configure<EmailAuthOptions>(configuration.GetSection(nameof(EmailAuthOptions)));
 
         /// <summary>
         /// Adds response compression to enable GZIP compression of responses.
@@ -241,8 +242,5 @@
                 .AddSingleton<IClockService, ClockService>()
                 .AddSingleton<IEmailSender, EmailSender>()
                 .AddSingleton<IEmailService, EmailService>();
-
-        public static IServiceCollection AddOptions(this IServiceCollection services, IConfigurationRoot configuration) =>
-            services.Configure<AuthMessageSenderOptions>(configuration);
     }
 }

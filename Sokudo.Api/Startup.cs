@@ -65,7 +65,7 @@
                 // Add configuration from an optional appsettings.development.json, appsettings.staging.json or
                 // appsettings.production.json file, depending on the environment. These settings override the ones in
                 // the appsettings.json file.
-                .AddJsonFile($"appsettings.{this.hostingEnvironment.EnvironmentName}.json", optional: true)
+                .AddJsonFile($"appsettings.{this.hostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
                 // This reads the configuration keys from the secret store. This allows you to store connection strings
                 // and other sensitive settings, so you don't have to check them into your source control provider.
                 // Only use this in Development, it is not intended for Production use. See

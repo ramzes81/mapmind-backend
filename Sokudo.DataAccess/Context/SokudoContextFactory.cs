@@ -9,7 +9,7 @@ namespace Sokudo.DataAccess.Context
         {
             var optionsBuilder = new DbContextOptionsBuilder<SokudoContext>();
             //put here connection string to create and apply migrations
-            optionsBuilder.UseSqlServer("Server=.,1433;Initial Catalog=Sokudo;Persist Security Info=False;User ID=user;Password=LetMeIn1234;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
+            optionsBuilder.UseSqlServer("");
 
             return new SokudoContext(optionsBuilder.Options);
         }
