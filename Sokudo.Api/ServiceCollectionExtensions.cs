@@ -32,6 +32,13 @@
     using Swashbuckle.AspNetCore.Swagger;
     using Sokudo.Email.Options;
     using Sokudo.Email.Service;
+    using Newtonsoft.Json.Serialization;
+    using Sokudo.Service.Transport;
+    using Sokudo.Domain.Transport;
+    using AspNetCoreIdentityBoilerplate.Service;
+    using Sokudo.DataAccess.Repository.Transport;
+    using Sokudo.DataAccess.UnitOfWork;
+    using AspNetCoreIdentityBoilerplate.UnitOfWork;
 
     public static partial class ServiceCollectionExtensions
     {
@@ -167,7 +174,9 @@
                 {
                     // Parse dates as DateTimeOffset values by default. You should prefer using DateTimeOffset over
                     // DateTime everywhere. Not doing so can cause problems with time-zones.
+                    //options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                     options.SerializerSettings.DateParseHandling = DateParseHandling.DateTimeOffset;
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                     // Output enumeration values as strings in JSON.
                     options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 });
@@ -234,7 +243,9 @@
         /// </summary>
         public static IServiceCollection AddRepositories(this IServiceCollection services) =>
             services
-                .AddScoped<ICarRepository, CarRepository>();
+                .AddScoped<IUnitOfWork, UnitOfWork>();
+                //.AddScoped<ICarRepository, CarRepository>()
+                //.AddScoped<ITransportDefinitionRepository, TransportDefinitionRepository>();
 
         /// <summary>
         /// Adds project services.
@@ -243,6 +254,8 @@
             services
                 .AddSingleton<IClockService, ClockService>()
                 .AddSingleton<IEmailSender, EmailSender>()
-                .AddSingleton<IEmailService, EmailService>();
+                .AddSingleton<IEmailService, EmailService>()
+                .AddScoped<ITransportDefinitionService, TransportDefinitionService>()
+                .AddScoped<ITransportManufacturerService, TransportManufacturerService>();
     }
 }

@@ -13,9 +13,10 @@ using System;
 namespace Sokudo.DataAccess.Migrations
 {
     [DbContext(typeof(SokudoContext))]
-    partial class SokudoContextModelSnapshot : ModelSnapshot
+    [Migration("20180225223321_Profiles")]
+    partial class Profiles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

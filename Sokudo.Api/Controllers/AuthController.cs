@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Sokudo.Api.Models.Auth;
+using Sokudo.Api.Response;
+using Sokudo.Api.Response.Auth;
 using Sokudo.Api.Settings;
 using Sokudo.Domain.Authentication;
 using Sokudo.Email.Service;
@@ -21,6 +26,7 @@ namespace Sokudo.Api.Controllers
     {
         private readonly SignInManager<User> _signManager;
         private readonly UserManager<User> _userManager;
+        private readonly RoleManager<User> _roleManager;
         private readonly IEmailService _emailService;
         private readonly HostSettings _hostSettings;
         private readonly EmailConfirmationSettings _emailConfirmationSettings;
@@ -36,8 +42,41 @@ namespace Sokudo.Api.Controllers
             _emailConfirmationSettings = emailConfirmationSettingsProvider.Value;
         }
 
+        [HttpPost(nameof(Login))]
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if(!user.EmailConfirmed)
+            {
+                //
+            }
+            if (!user.IsRegistrationFinished)
+            {
+                //
+            }
+            
+            var signInResult = 
+                await _signManager.PasswordSignInAsync(user, model.Password, true, false);
+
+            if(signInResult.Succeeded)
+            {
+                return Ok();
+            }
+            
+            ModelState.AddModelError("", "Invalid login/password");
+            
+            return BadRequest();
+        }
+
+        [HttpPost(nameof(LogOut))]
+        public async Task<IActionResult> LogOut()
+        {
+            await _signManager.SignOutAsync();
+            return Ok();
+        }
+
         [HttpPost(nameof(Register))]
-        public async Task<IActionResult> Register(SignUpViewModel model)
+        public async Task<IActionResult> Register([FromBody] SignUpViewModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
             if(user == null)
@@ -55,9 +94,9 @@ namespace Sokudo.Api.Controllers
                 }
             }
 
-            if(user.EmailConfirmed)
+            if(user.IsRegistrationFinished)
             {
-                return BadRequest();
+                return BadRequest(new UserAlreadyFinishedRegistrationResponse());
             }
 
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -75,6 +114,39 @@ namespace Sokudo.Api.Controllers
 
             await _emailService.SendConfirmationEmailAsync(model.Email, callbackUrl);
 
+            return Ok();
+        }
+
+        [HttpPost(nameof(CompleteRegistrationPassenger))]
+        public async Task<IActionResult> CompleteRegistrationPassenger([FromBody] CompleteRegistrationModel model)
+        {
+            return Ok();
+        }
+
+        [HttpPost(nameof(CompleteRegistrationDriver))]
+        public async Task<IActionResult> CompleteRegistrationDriver([FromBody] DriverCompleteRegistrationModel model)
+        {
+            return Ok();
+        }
+
+        [HttpPost(nameof(ConfirmEmail))]
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId);
+            if (user == null)
+            {
+                return NotFound(new NotFoundResponse<User>());
+            }
+            //if(user.EmailConfirmed)
+            //{
+            //    return BadRequest(new EmailAlreadyConfirmedResponse());
+            //}
+            var result = await _userManager.ConfirmEmailAsync(user, model.Code);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new CantConfirmEmailResponse());
+            }
+            await _signManager.SignInAsync(user, true);
             return Ok();
         }
     }

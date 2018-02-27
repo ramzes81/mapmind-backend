@@ -19,6 +19,10 @@
     using Microsoft.EntityFrameworkCore;
     using Sokudo.Domain.Authentication;
     using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc.Cors.Internal;
+    using AspNetCoreIdentityBoilerplate.Configuration;
+    using AutoMapper;
+    using Microsoft.AspNetCore.Authentication.Cookies;
 
     /// <summary>
     /// The main start-up class for the application.
@@ -119,10 +123,6 @@
                 .AddCaching()
                 .AddCustomOptions(this.configuration)
                 .AddCustomRouting()
-                .AddCors(options =>
-                {
-                    options.AddPolicy(CorsPolicyName.AllowAny, corsBuilder => corsBuilder.AllowAnyOrigin());
-                })
                 .AddResponseCaching()
                 .AddCustomResponseCompression(this.configuration)
                 .AddSwagger()
@@ -135,7 +135,31 @@
                     .GetRequiredService<IUrlHelperFactory>()
                     .GetUrlHelper(x.GetRequiredService<IActionContextAccessor>().ActionContext))
                 .AddCustomVersioning()
-                .AddMvcCore()
+                .AddAutoMapper()
+                .AddIdentity<User, IdentityRole>(config =>
+                {
+                    config.SignIn.RequireConfirmedEmail = true;
+                })
+                .AddEntityFrameworkStores<SokudoContext>()
+                .AddDefaultTokenProviders()
+                .Services
+                .ConfigureApplicationCookie(options =>
+                {
+                    options.AccessDeniedPath = "/Auth/AccessDenied";
+                    options.Cookie.Name = "Sokudo";
+                    options.Cookie.HttpOnly = true;
+                    options.ExpireTimeSpan = TimeSpan.FromDays(60);
+                    options.LoginPath = "/Auth/Login";
+                    options.LogoutPath = "/Auth/Logout";
+                    // ReturnUrlParameter requires `using Microsoft.AspNetCore.Authentication.Cookies;`
+                    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                    options.SlidingExpiration = true;
+                })
+                .AddMvcCore(options =>
+                {
+                    options.AddModelBinders();
+                })
+                .AddCustomCors()
                 .AddApiExplorer()
                 .AddAuthorization()
                 .AddFormatterMappings()
@@ -147,13 +171,6 @@
                 .Services
                 .AddRepositories()
                 .AddServices()
-                .AddIdentity<User, IdentityRole>(config =>
-                {
-                    config.SignIn.RequireConfirmedEmail = true;
-                })
-                .AddEntityFrameworkStores<SokudoContext>()
-                .AddDefaultTokenProviders()
-                .Services
                 .BuildServiceProvider();
             
         /// <summary>
@@ -162,6 +179,7 @@
         /// </summary>
         public void Configure(IApplicationBuilder application) =>
             application
+                .UseCors(CorsPolicyName.AllowAny)
                 // Require HTTPS to be used across the whole site. Also set a custom port to use for SSL in
                 // Development. The port number to use is taken from the launchSettings.json file which Visual
                 // Studio uses to start the application.
@@ -170,13 +188,13 @@
                 .UseResponseCaching()
                 .UseResponseCompression()
                 .UseStaticFilesWithCacheControl(this.configuration)
-                .UseCors(builder => builder.AllowAnyOrigin())
                 .UseIf(
                     this.hostingEnvironment.IsDevelopment(),
                     x => x
                         .UseDebugging()
                         .UseDeveloperErrorPages())
                 .UseStrictTransportSecurityHttpHeader()
+                .UseAuthentication()
                 .UseMvc()
                 .UseSwagger()
                 .UseSwaggerUI(
@@ -191,6 +209,7 @@
                                 $"/swagger/{apiVersionDescription.GroupName}/swagger.json",
                                 $"Version {apiVersionDescription.ApiVersion}");
                         }
-                    });
+                    })
+                .SeedDatabase();
     }
 }

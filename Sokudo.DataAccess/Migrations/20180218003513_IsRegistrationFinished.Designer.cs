@@ -6,16 +6,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using Sokudo.DataAccess.Context;
-using Sokudo.Domain.Authentication;
-using Sokudo.Domain.Transport;
 using System;
 
 namespace Sokudo.DataAccess.Migrations
 {
     [DbContext(typeof(SokudoContext))]
-    partial class SokudoContextModelSnapshot : ModelSnapshot
+    [Migration("20180218003513_IsRegistrationFinished")]
+    partial class IsRegistrationFinished
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,16 +139,12 @@ namespace Sokudo.DataAccess.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<int?>("DriverProfileId");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
 
                     b.Property<string>("FirstName");
-
-                    b.Property<int>("Gender");
 
                     b.Property<bool>("IsRegistrationFinished");
 
@@ -180,8 +175,6 @@ namespace Sokudo.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DriverProfileId");
-
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
@@ -191,86 +184,6 @@ namespace Sokudo.DataAccess.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Sokudo.Domain.Profiles.DriverProfile", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DriverProfile");
-                });
-
-            modelBuilder.Entity("Sokudo.Domain.Transport.DriverTransport", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Color");
-
-                    b.Property<int?>("DriverProfileId");
-
-                    b.Property<int?>("TransportId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DriverProfileId");
-
-                    b.HasIndex("TransportId");
-
-                    b.ToTable("DriverTransport");
-                });
-
-            modelBuilder.Entity("Sokudo.Domain.Transport.TransportDefinition", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int?>("ManufacturerId");
-
-                    b.Property<int?>("ModelId");
-
-                    b.Property<int>("SeatsCount");
-
-                    b.Property<int>("Type");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ManufacturerId");
-
-                    b.HasIndex("ModelId");
-
-                    b.ToTable("TransportDefinitions");
-                });
-
-            modelBuilder.Entity("Sokudo.Domain.Transport.TransportManufacturer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TransportManufacturer");
-                });
-
-            modelBuilder.Entity("Sokudo.Domain.Transport.TransportModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int?>("ManufacturerId");
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ManufacturerId");
-
-                    b.ToTable("TransportModel");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -316,42 +229,6 @@ namespace Sokudo.DataAccess.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Sokudo.Domain.Authentication.User", b =>
-                {
-                    b.HasOne("Sokudo.Domain.Profiles.DriverProfile", "DriverProfile")
-                        .WithMany()
-                        .HasForeignKey("DriverProfileId");
-                });
-
-            modelBuilder.Entity("Sokudo.Domain.Transport.DriverTransport", b =>
-                {
-                    b.HasOne("Sokudo.Domain.Profiles.DriverProfile")
-                        .WithMany("Transports")
-                        .HasForeignKey("DriverProfileId");
-
-                    b.HasOne("Sokudo.Domain.Transport.TransportDefinition", "Transport")
-                        .WithMany()
-                        .HasForeignKey("TransportId");
-                });
-
-            modelBuilder.Entity("Sokudo.Domain.Transport.TransportDefinition", b =>
-                {
-                    b.HasOne("Sokudo.Domain.Transport.TransportManufacturer", "Manufacturer")
-                        .WithMany()
-                        .HasForeignKey("ManufacturerId");
-
-                    b.HasOne("Sokudo.Domain.Transport.TransportModel", "Model")
-                        .WithMany()
-                        .HasForeignKey("ModelId");
-                });
-
-            modelBuilder.Entity("Sokudo.Domain.Transport.TransportModel", b =>
-                {
-                    b.HasOne("Sokudo.Domain.Transport.TransportManufacturer", "Manufacturer")
-                        .WithMany("Models")
-                        .HasForeignKey("ManufacturerId");
                 });
 #pragma warning restore 612, 618
         }
