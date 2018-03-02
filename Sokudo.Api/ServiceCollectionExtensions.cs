@@ -256,6 +256,7 @@
                 .AddSingleton<IEmailSender, EmailSender>()
                 .AddSingleton<IEmailService, EmailService>()
                 .AddScoped<ITransportDefinitionService, TransportDefinitionService>()
-                .AddScoped<ITransportManufacturerService, TransportManufacturerService>();
+                .AddScoped<ITransportManufacturerService, TransportManufacturerService>()
+                .AddScoped<ITransportModelService, TransportModelService>();
     }
 }

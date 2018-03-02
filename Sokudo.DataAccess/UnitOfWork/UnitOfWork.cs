@@ -12,6 +12,13 @@ namespace Sokudo.DataAccess.UnitOfWork
 {
     public class UnitOfWork : UnitOfWork<SokudoContext>
     {
+        private static readonly Dictionary<Type, Type> EntityToRepositoryMap = new Dictionary<Type, Type>
+        {
+            {typeof(TransportDefinition), typeof(TransportDefinitionRepository)},
+            {typeof(TransportManufacturer), typeof(TransportManufacturerRepository)},
+            {typeof(TransportModel), typeof(TransportModelRepository)},
+        };
+
         public UnitOfWork(SokudoContext dbContext) : base(dbContext)
         {
         }
@@ -26,17 +33,14 @@ namespace Sokudo.DataAccess.UnitOfWork
                 throw new ArgumentNullException(nameof(dbContext));
             }
 
-            if(entityType == typeof(TransportDefinition))
+            var repositoryType = EntityToRepositoryMap[entityType];
+
+            if(repositoryType is null)
             {
-                return (IRepository<TEntity>) new TransportDefinitionRepository(context);
+                throw new NotImplementedException();
             }
 
-            if (entityType == typeof(TransportManufacturer))
-            {
-                return (IRepository<TEntity>) new TransportManufacturerRepository(context);
-            }
-
-            throw new NotImplementedException();
+            return (IRepository<TEntity>) Activator.CreateInstance(repositoryType, dbContext);
         }
     }
 }
