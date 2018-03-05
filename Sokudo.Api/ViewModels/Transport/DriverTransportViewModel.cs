@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sokudo.Api.ViewModels.Transport
 {
-    public class DriverTransportViewModel
+    public class DriverTransportViewModel: TransportDefinitionViewModel
     {
         public class DriverTransportViewModelProfile : Profile
         {
@@ -19,6 +19,6 @@ namespace Sokudo.Api.ViewModels.Transport
 
         public string Color { get; set; }
 
-        public TransportDefinitionViewModel Transport { get; set; }
+        public int Year { get; set; }
     }
 }
