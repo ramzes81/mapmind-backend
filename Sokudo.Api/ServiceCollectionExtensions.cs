@@ -196,7 +196,8 @@
                         x => x
                             .AllowAnyOrigin()
                             .AllowAnyMethod()
-                            .AllowAnyHeader());
+                            .AllowAnyHeader()
+                            .AllowCredentials());
                 });
 
         /// <summary>

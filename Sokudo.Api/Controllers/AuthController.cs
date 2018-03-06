@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
+using AspNetCoreIdentityBoilerplate.Controller;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -22,7 +23,7 @@ namespace Sokudo.Api.Controllers
 {
     [Route("[controller]")]
     [ApiVersion("1.0")]
-    public class AuthController : ControllerBase
+    public class AuthController : BaseIdentityController<User>
     {
         private readonly SignInManager<User> _signManager;
         private readonly UserManager<User> _userManager;
@@ -33,7 +34,7 @@ namespace Sokudo.Api.Controllers
 
         public AuthController(UserManager<User> userManager, SignInManager<User> signManager, 
             IEmailService emailService, IOptions<HostSettings> hostSettingsProvider,
-            IOptions<EmailConfirmationSettings> emailConfirmationSettingsProvider)
+            IOptions<EmailConfirmationSettings> emailConfirmationSettingsProvider) : base(userManager)
         {
             _userManager = userManager;
             _signManager = signManager;
@@ -120,6 +121,7 @@ namespace Sokudo.Api.Controllers
         [HttpPost(nameof(CompleteRegistrationPassenger))]
         public async Task<IActionResult> CompleteRegistrationPassenger([FromBody] CompleteRegistrationModel model)
         {
+            var user = await GetCurrentUserAsync();
             return Ok();
         }
 
@@ -132,22 +134,26 @@ namespace Sokudo.Api.Controllers
         [HttpPost(nameof(ConfirmEmail))]
         public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailModel model)
         {
+            // FOR TESTING PURPOSES
             var user = await _userManager.FindByIdAsync(model.UserId);
-            if (user == null)
-            {
-                return NotFound(new NotFoundResponse<User>());
-            }
-            //if(user.EmailConfirmed)
-            //{
-            //    return BadRequest(new EmailAlreadyConfirmedResponse());
-            //}
-            var result = await _userManager.ConfirmEmailAsync(user, model.Code);
-            if (!result.Succeeded)
-            {
-                return BadRequest(new CantConfirmEmailResponse());
-            }
             await _signManager.SignInAsync(user, true);
             return Ok();
+            //var user = await _userManager.FindByIdAsync(model.UserId);
+            //if (user == null)
+            //{
+            //    return NotFound(new NotFoundResponse<User>());
+            //}
+            ////if(user.EmailConfirmed)
+            ////{
+            ////    return BadRequest(new EmailAlreadyConfirmedResponse());
+            ////}
+            //var result = await _userManager.ConfirmEmailAsync(user, model.Code);
+            //if (!result.Succeeded)
+            //{
+            //    return BadRequest(new CantConfirmEmailResponse());
+            //}
+            //await _signManager.SignInAsync(user, true);
+            //return Ok();
         }
     }
 }

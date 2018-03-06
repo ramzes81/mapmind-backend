@@ -159,9 +159,9 @@
                 {
                     options.AddModelBinders();
                 })
+                .AddAuthorization()
                 .AddCustomCors()
                 .AddApiExplorer()
-                .AddAuthorization()
                 .AddFormatterMappings()
                 .AddDataAnnotations()
                 .AddJsonFormatters()
