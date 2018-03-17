@@ -5,10 +5,12 @@
     using Boilerplate.AspNetCore;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Identity;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Sokudo.Api.Constants;
     using Sokudo.Api.Settings;
+    using Sokudo.DataAccess.Context;
     using Sokudo.Domain.Authentication;
 
     public static partial class ApplicationBuilderExtensions
@@ -78,6 +80,9 @@
               .GetRequiredService<IServiceScopeFactory>()
               .CreateScope())
             {
+                var dbContext = serviceScope.ServiceProvider.GetService<SokudoContext>();
+                dbContext.Database.Migrate();
+
                 var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
 
                 if (roleManager.FindByNameAsync(UserRoles.Admin).Result == null)

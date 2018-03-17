@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Sokudo.Api.Response.Auth
 {
-    public class EmailAlreadyConfirmedResponse: BadRequestResponse
+    public class RegistrationAlreadyFinishedResponse : BadRequestResponse
     {
-        public override string Message => "Email already confirmed!";
+        public override string Message => "Registration already finished!";
     }
 }

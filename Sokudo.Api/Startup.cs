@@ -139,6 +139,9 @@
                 .AddIdentity<User, IdentityRole>(config =>
                 {
                     config.SignIn.RequireConfirmedEmail = true;
+                    config.Password.RequireNonAlphanumeric = false;
+                    config.Password.RequireUppercase = false;
+                    config.Password.RequireDigit = false;
                 })
                 .AddEntityFrameworkStores<SokudoContext>()
                 .AddDefaultTokenProviders()

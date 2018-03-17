@@ -39,6 +39,7 @@
     using Sokudo.DataAccess.Repository.Transport;
     using Sokudo.DataAccess.UnitOfWork;
     using AspNetCoreIdentityBoilerplate.UnitOfWork;
+    using Sokudo.Service.Account;
 
     public static partial class ServiceCollectionExtensions
     {
@@ -258,6 +259,7 @@
                 .AddSingleton<IEmailService, EmailService>()
                 .AddScoped<ITransportDefinitionService, TransportDefinitionService>()
                 .AddScoped<ITransportManufacturerService, TransportManufacturerService>()
-                .AddScoped<ITransportModelService, TransportModelService>();
+                .AddScoped<ITransportModelService, TransportModelService>()
+                .AddScoped<IEmailConfirmationService, EmailConfirmationService>();
     }
 }

@@ -5,8 +5,10 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using AspNetCoreIdentityBoilerplate.Controller;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,8 +18,11 @@ using Sokudo.Api.Models.Auth;
 using Sokudo.Api.Response;
 using Sokudo.Api.Response.Auth;
 using Sokudo.Api.Settings;
+using Sokudo.Api.ViewModels.User;
 using Sokudo.Domain.Authentication;
 using Sokudo.Email.Service;
+using Sokudo.Service.Account;
+using Sokudo.Service.Account.Result;
 
 namespace Sokudo.Api.Controllers
 {
@@ -27,20 +32,24 @@ namespace Sokudo.Api.Controllers
     {
         private readonly SignInManager<User> _signManager;
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<User> _roleManager;
         private readonly IEmailService _emailService;
         private readonly HostSettings _hostSettings;
         private readonly EmailConfirmationSettings _emailConfirmationSettings;
+        private readonly IMapper _mapper;
+        private readonly IEmailConfirmationService _emailConfirmationService;
 
-        public AuthController(UserManager<User> userManager, SignInManager<User> signManager, 
+        public AuthController(UserManager<User> userManager, SignInManager<User> signManager,
             IEmailService emailService, IOptions<HostSettings> hostSettingsProvider,
-            IOptions<EmailConfirmationSettings> emailConfirmationSettingsProvider) : base(userManager)
+            IOptions<EmailConfirmationSettings> emailConfirmationSettingsProvider,
+            IMapper mapper, IEmailConfirmationService emailConfirmationService) : base(userManager)
         {
             _userManager = userManager;
             _signManager = signManager;
             _emailService = emailService;
             _hostSettings = hostSettingsProvider.Value;
             _emailConfirmationSettings = emailConfirmationSettingsProvider.Value;
+            _mapper = mapper;
+            _emailConfirmationService = emailConfirmationService;
         }
 
         [HttpPost(nameof(Login))]
@@ -58,15 +67,15 @@ namespace Sokudo.Api.Controllers
             
             var signInResult = 
                 await _signManager.PasswordSignInAsync(user, model.Password, true, false);
-
+            
             if(signInResult.Succeeded)
             {
-                return Ok();
+                var userViewModel = _mapper.Map<UserViewModel>(user);
+                var roles = await _userManager.GetRolesAsync(user);
+                return Ok(new SuccessfulLoginResponse(userViewModel, roles));
             }
-            
-            ModelState.AddModelError("", "Invalid login/password");
-            
-            return BadRequest();
+
+            return BadRequest(new InvalidCredentialsResponse());
         }
 
         [HttpPost(nameof(LogOut))]
@@ -87,11 +96,7 @@ namespace Sokudo.Api.Controllers
 
                 if(!result.Succeeded)
                 {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError("", error.Description);
-                    }
-                    return BadRequest();
+                    return BadRequest(new IdentityBadRequestResponse(ModelState, result));
                 }
             }
 
@@ -121,39 +126,76 @@ namespace Sokudo.Api.Controllers
         [HttpPost(nameof(CompleteRegistrationPassenger))]
         public async Task<IActionResult> CompleteRegistrationPassenger([FromBody] CompleteRegistrationModel model)
         {
-            var user = await GetCurrentUserAsync();
+            var confirmEmailResult = await ConfirmEmail(model.UserId, model.ConfirmationCode);
+            if(confirmEmailResult != null)
+            {
+                return confirmEmailResult;
+            }
+            var user = await _userManager.FindByIdAsync(model.UserId);
+
+            if (user.IsRegistrationFinished)
+            {
+                return BadRequest(new RegistrationAlreadyFinishedResponse());
+            }
+
+            var result = await _userManager.AddPasswordAsync(user, model.Password);
+
+            if(!result.Succeeded)
+            {
+                return BadRequest(new IdentityBadRequestResponse(ModelState, result));
+            }
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.IsRegistrationFinished = true;
+            
+            await _userManager.UpdateAsync(user);
+
+            await _userManager.AddToRolesAsync(user, new[] { UserRoles.User, UserRoles.Passenger });
+
             return Ok();
         }
 
+        [Authorize]
         [HttpPost(nameof(CompleteRegistrationDriver))]
         public async Task<IActionResult> CompleteRegistrationDriver([FromBody] DriverCompleteRegistrationModel model)
         {
+            var user = await GetCurrentUserAsync();
+
+            if (user.IsRegistrationFinished)
+            {
+                return BadRequest(new RegistrationAlreadyFinishedResponse());
+            }
+
+            var result = await _userManager.AddPasswordAsync(user, model.Password);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(new IdentityBadRequestResponse(ModelState, result));
+            }
+
+            await _userManager.AddToRolesAsync(user, new[] { UserRoles.User, UserRoles.Passenger });
             return Ok();
         }
-
-        [HttpPost(nameof(ConfirmEmail))]
-        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailModel model)
+        
+        private async Task<IActionResult> ConfirmEmail(string userId, string confirmationCode)
         {
-            // FOR TESTING PURPOSES
-            var user = await _userManager.FindByIdAsync(model.UserId);
-            await _signManager.SignInAsync(user, true);
-            return Ok();
-            //var user = await _userManager.FindByIdAsync(model.UserId);
-            //if (user == null)
-            //{
-            //    return NotFound(new NotFoundResponse<User>());
-            //}
-            ////if(user.EmailConfirmed)
-            ////{
-            ////    return BadRequest(new EmailAlreadyConfirmedResponse());
-            ////}
-            //var result = await _userManager.ConfirmEmailAsync(user, model.Code);
-            //if (!result.Succeeded)
-            //{
-            //    return BadRequest(new CantConfirmEmailResponse());
-            //}
-            //await _signManager.SignInAsync(user, true);
-            //return Ok();
+            var emailConfirmationResult = await
+                _emailConfirmationService.ConfirmEmailAsync(userId, confirmationCode);
+            if (!emailConfirmationResult.Success)
+            {
+                switch (emailConfirmationResult.ResultCode)
+                {
+                    case EmailConfirmationErrorResultCodes.EmailAlreadyConfirmed:
+                        return BadRequest(new EmailAlreadyConfirmedResponse());
+                    case EmailConfirmationErrorResultCodes.UserNotFound:
+                        return NotFound(new NotFoundResponse<User>());
+                    case EmailConfirmationErrorResultCodes.InvalidToken:
+                    default:
+                        return BadRequest(new CantConfirmEmailResponse());
+                }
+            }
+            return null;
         }
     }
 }
