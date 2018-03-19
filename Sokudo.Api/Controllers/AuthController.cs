@@ -14,9 +14,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
 using Sokudo.Api.Models.Auth;
 using Sokudo.Api.Response;
 using Sokudo.Api.Response.Auth;
+using Sokudo.Api.Services;
 using Sokudo.Api.Settings;
 using Sokudo.Api.ViewModels.User;
 using Sokudo.Domain.Authentication;
@@ -37,11 +39,14 @@ namespace Sokudo.Api.Controllers
         private readonly EmailConfirmationSettings _emailConfirmationSettings;
         private readonly IMapper _mapper;
         private readonly IEmailConfirmationService _emailConfirmationService;
+        private readonly IJwtFactory _jwtFactory;
+        private readonly JwtSettings _jwtOptions;
 
         public AuthController(UserManager<User> userManager, SignInManager<User> signManager,
             IEmailService emailService, IOptions<HostSettings> hostSettingsProvider,
             IOptions<EmailConfirmationSettings> emailConfirmationSettingsProvider,
-            IMapper mapper, IEmailConfirmationService emailConfirmationService) : base(userManager)
+            IMapper mapper, IEmailConfirmationService emailConfirmationService,
+            IJwtFactory jwtFactory, IOptions<JwtSettings> jwtOptions) : base(userManager)
         {
             _userManager = userManager;
             _signManager = signManager;
@@ -50,32 +55,32 @@ namespace Sokudo.Api.Controllers
             _emailConfirmationSettings = emailConfirmationSettingsProvider.Value;
             _mapper = mapper;
             _emailConfirmationService = emailConfirmationService;
+            _jwtFactory = jwtFactory;
+            _jwtOptions = jwtOptions.Value;
         }
-
+        
         [HttpPost(nameof(Login))]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
-            if(!user.EmailConfirmed)
+            if(user == null)
             {
-                //
+                return BadRequest(new InvalidCredentialsResponse());
             }
-            if (!user.IsRegistrationFinished)
+            if (!await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                //
+                return BadRequest(new InvalidCredentialsResponse());
             }
             
-            var signInResult = 
-                await _signManager.PasswordSignInAsync(user, model.Password, true, false);
-            
-            if(signInResult.Succeeded)
-            {
-                var userViewModel = _mapper.Map<UserViewModel>(user);
-                var roles = await _userManager.GetRolesAsync(user);
-                return Ok(new SuccessfulLoginResponse(userViewModel, roles));
-            }
+            var jwt = await _jwtFactory.GenerateTokenAsync(user);
+            var userViewModel = _mapper.Map<UserViewModel>(user);
+            var roles = await _userManager.GetRolesAsync(user);
 
-            return BadRequest(new InvalidCredentialsResponse());
+            return Ok(new SuccessfulLoginResponse(userViewModel, roles)
+            {
+                Token = jwt.Token,
+                ExpiresIn = jwt.ExpiresIn,
+            });
         }
 
         [HttpPost(nameof(LogOut))]

@@ -87,7 +87,8 @@
                 .Configure<CacheProfileSettings>(configuration.GetSection(nameof(CacheProfileSettings)))
                 .Configure<EmailAuthOptions>(configuration.GetSection(nameof(EmailAuthOptions)))
                 .Configure<HostSettings>(configuration.GetSection(nameof(HostSettings)))
-                .Configure<EmailConfirmationSettings>(configuration.GetSection(nameof(EmailConfirmationSettings)));
+                .Configure<EmailConfirmationSettings>(configuration.GetSection(nameof(EmailConfirmationSettings)))
+                .Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
 
         /// <summary>
         /// Adds response compression to enable GZIP compression of responses.
@@ -216,6 +217,14 @@
                     options.DescribeAllParametersInCamelCase();
                     options.DescribeStringEnumsInCamelCase();
 
+                    options.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                    {
+                        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        Name = "Authorization",
+                        In = "header",
+                        Type = "apiKey",
+                    });
+
                     // Add the XML comment file for this assembly, so it's contents can be displayed.
                     options.IncludeXmlCommentsIfExists(assembly);
 
@@ -254,6 +263,7 @@
         /// </summary>
         public static IServiceCollection AddServices(this IServiceCollection services) =>
             services
+                .AddSingleton<IJwtFactory, JwtFactory>()
                 .AddSingleton<IClockService, ClockService>()
                 .AddSingleton<IEmailSender, EmailSender>()
                 .AddSingleton<IEmailService, EmailService>()

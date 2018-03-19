@@ -7,7 +7,7 @@
     [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : ControllerBase
     {
-        [HttpGet("", Name = HomeControllerRoute.GetIndex)]
+        [HttpGet("")]
         public IActionResult Index() => this.RedirectPermanent("/swagger");
     }
 }

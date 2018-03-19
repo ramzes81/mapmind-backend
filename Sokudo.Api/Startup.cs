@@ -23,6 +23,10 @@
     using AspNetCoreIdentityBoilerplate.Configuration;
     using AutoMapper;
     using Microsoft.AspNetCore.Authentication.Cookies;
+    using Sokudo.Api.Settings;
+    using System.Text;
+    using Microsoft.IdentityModel.Tokens;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
 
     /// <summary>
     /// The main start-up class for the application.
@@ -157,12 +161,44 @@
                     // ReturnUrlParameter requires `using Microsoft.AspNetCore.Authentication.Cookies;`
                     options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
                     options.SlidingExpiration = true;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.None;
                 })
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(configureOptions =>
+                {
+                    var jwtAppSettingOptions = configuration.GetSection(nameof(JwtSettings));
+                    configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)];
+                    configureOptions.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = jwtAppSettingOptions[nameof(JwtSettings.Issuer)],
+
+                        ValidateAudience = true,
+                        ValidAudience = jwtAppSettingOptions[nameof(JwtSettings.Audience)],
+
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = JwtSettings.SigningKey,
+
+                        RequireExpirationTime = false,
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                    configureOptions.SaveToken = true;
+                })
+                .Services
                 .AddMvcCore(options =>
                 {
                     options.AddModelBinders();
                 })
-                .AddAuthorization()
+                .AddAuthorization(options =>
+                {
+                    options.AddPolicy("ApiUser", 
+                        policy => policy.RequireClaim(Constants.Constants.Strings.JwtClaimIdentifiers.Rol, Constants.Constants.Strings.JwtClaims.ApiAccess));
+                })
                 .AddCustomCors()
                 .AddApiExplorer()
                 .AddFormatterMappings()

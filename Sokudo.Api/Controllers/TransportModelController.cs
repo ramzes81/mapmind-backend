@@ -2,8 +2,12 @@
 using AspNetCoreIdentityBoilerplate.DataQuery.Specification;
 using AspNetCoreIdentityBoilerplate.DataQuery.Specification.Implementation.Compare;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Sokudo.Api.ViewModels.Transport;
+using Sokudo.Domain.Authentication;
 using Sokudo.Domain.Transport;
 using Sokudo.Service.Transport;
 using System;
@@ -22,6 +26,7 @@ namespace Sokudo.Api.Controllers
         {
         }
 
+        [Authorize]
         [HttpGet("/TransportManufacturer/{manufacturerId}/Where")]
         public async Task<IActionResult> GetTransportManufacturerModelWhere([FromRoute]int manufacturerId, Specification<TransportModel> specification)
         {
