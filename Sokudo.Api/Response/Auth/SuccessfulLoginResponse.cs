@@ -15,7 +15,8 @@ namespace Sokudo.Api.Response.Auth
         }
 
         public UserViewModel User { get; set; }
-
         public IEnumerable<string> Roles { get; set; }
+        public string Token { get; set; }
+        public long ExpiresIn { get; set; }
     }
 }

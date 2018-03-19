@@ -26,7 +26,7 @@
         /// <returns>A 200 OK or error response containing details of what is wrong.</returns>
         /// <response code="204">The API is functioning normally.</response>
         /// <response code="503">The API or one of it's dependencies is not functioning, the service is unavailable.</response>
-        [HttpGet(Name = StatusControllerRoute.GetStatus)]
+        [HttpGet("")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(void), StatusCodes.Status503ServiceUnavailable)]
