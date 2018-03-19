@@ -1,8 +1,16 @@
-﻿namespace Sokudo.Domain.Transport
+﻿using AspNetCoreIdentityBoilerplate.Entity;
+
+namespace Sokudo.Domain.Transport
 {
-    public class TransportDefinition
+    public class TransportDefinition: Entity
     {
-        //TODO: Decide how to store car manufacturer and model
+        public TransportType Type { get; set; }
+
+        public int SeatsCount { get; set; }
+
+        public virtual TransportManufacturer Manufacturer { get; set; }
+
+        public virtual TransportModel Model { get; set; }
     }
 
     public enum TransportType

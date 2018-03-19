@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\AspNetCoreIdentityBoilerplate\AspNetCoreIdentityBoilerplate\AspNetCoreIdentityBoilerplate.csproj" />
     <ProjectReference Include="..\Sokudo.Domain\Sokudo.Domain.csproj" />
   </ItemGroup>
   

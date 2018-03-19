@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using AspNetCoreIdentityBoilerplate.Entity;
+using System.Collections.Generic;
 
 namespace Sokudo.Domain.Transport
 {
-    public class DriverTransport
+    public class DriverTransport: Entity
     {
-        public virtual TransportDefinition TransportDefinition { get; set; }
+        public string Color { get; set; }
 
-        public virtual List<Seat> Seats { get; set; }
+        public virtual TransportDefinition Transport { get; set; }
+
+        //public virtual List<Seat> Seats { get; set; }
     }
 }

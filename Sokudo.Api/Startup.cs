@@ -19,6 +19,10 @@
     using Microsoft.EntityFrameworkCore;
     using Sokudo.Domain.Authentication;
     using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc.Cors.Internal;
+    using AspNetCoreIdentityBoilerplate.Configuration;
+    using AutoMapper;
+    using Microsoft.AspNetCore.Authentication.Cookies;
 
     /// <summary>
     /// The main start-up class for the application.
@@ -65,7 +69,7 @@
                 // Add configuration from an optional appsettings.development.json, appsettings.staging.json or
                 // appsettings.production.json file, depending on the environment. These settings override the ones in
                 // the appsettings.json file.
-                .AddJsonFile($"appsettings.{this.hostingEnvironment.EnvironmentName}.json", optional: true)
+                .AddJsonFile($"appsettings.{this.hostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
                 // This reads the configuration keys from the secret store. This allows you to store connection strings
                 // and other sensitive settings, so you don't have to check them into your source control provider.
                 // Only use this in Development, it is not intended for Production use. See
@@ -131,26 +135,45 @@
                     .GetRequiredService<IUrlHelperFactory>()
                     .GetUrlHelper(x.GetRequiredService<IActionContextAccessor>().ActionContext))
                 .AddCustomVersioning()
-                .AddMvcCore()
-                .AddApiExplorer()
+                .AddAutoMapper()
+                .AddIdentity<User, IdentityRole>(config =>
+                {
+                    config.SignIn.RequireConfirmedEmail = true;
+                    config.Password.RequireNonAlphanumeric = false;
+                    config.Password.RequireUppercase = false;
+                    config.Password.RequireDigit = false;
+                })
+                .AddEntityFrameworkStores<SokudoContext>()
+                .AddDefaultTokenProviders()
+                .Services
+                .ConfigureApplicationCookie(options =>
+                {
+                    options.AccessDeniedPath = "/Auth/AccessDenied";
+                    options.Cookie.Name = "Sokudo";
+                    options.Cookie.HttpOnly = true;
+                    options.ExpireTimeSpan = TimeSpan.FromDays(60);
+                    options.LoginPath = "/Auth/Login";
+                    options.LogoutPath = "/Auth/Logout";
+                    // ReturnUrlParameter requires `using Microsoft.AspNetCore.Authentication.Cookies;`
+                    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                    options.SlidingExpiration = true;
+                })
+                .AddMvcCore(options =>
+                {
+                    options.AddModelBinders();
+                })
                 .AddAuthorization()
+                .AddCustomCors()
+                .AddApiExplorer()
                 .AddFormatterMappings()
                 .AddDataAnnotations()
                 .AddJsonFormatters()
                 .AddCustomJsonOptions()
-                .AddCustomCors()
                 .AddVersionedApiExplorer()
                 .AddCustomMvcOptions(configuration, hostingEnvironment)
                 .Services
                 .AddRepositories()
                 .AddServices()
-                .AddIdentity<User, IdentityRole>(config =>
-                {
-                    config.SignIn.RequireConfirmedEmail = true;
-                })
-                .AddEntityFrameworkStores<SokudoContext>()
-                .AddDefaultTokenProviders()
-                .Services
                 .BuildServiceProvider();
             
         /// <summary>
@@ -159,6 +182,7 @@
         /// </summary>
         public void Configure(IApplicationBuilder application) =>
             application
+                .UseCors(CorsPolicyName.AllowAny)
                 // Require HTTPS to be used across the whole site. Also set a custom port to use for SSL in
                 // Development. The port number to use is taken from the launchSettings.json file which Visual
                 // Studio uses to start the application.
@@ -167,13 +191,13 @@
                 .UseResponseCaching()
                 .UseResponseCompression()
                 .UseStaticFilesWithCacheControl(this.configuration)
-                .UseCors(CorsPolicyName.AllowAny)
                 .UseIf(
                     this.hostingEnvironment.IsDevelopment(),
                     x => x
                         .UseDebugging()
                         .UseDeveloperErrorPages())
                 .UseStrictTransportSecurityHttpHeader()
+                .UseAuthentication()
                 .UseMvc()
                 .UseSwagger()
                 .UseSwaggerUI(
@@ -188,6 +212,7 @@
                                 $"/swagger/{apiVersionDescription.GroupName}/swagger.json",
                                 $"Version {apiVersionDescription.ApiVersion}");
                         }
-                    });
+                    })
+                .SeedDatabase();
     }
 }

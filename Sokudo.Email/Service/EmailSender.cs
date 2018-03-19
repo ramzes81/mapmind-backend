@@ -1,8 +1,6 @@
 ﻿using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using SendGrid;
-using SendGrid.Helpers.Mail;
 using Sokudo.Email.Options;
 using System.Threading.Tasks;
 
@@ -10,12 +8,12 @@ namespace Sokudo.Email.Service
 {
     public class EmailSender : IEmailSender
     {
-        public EmailSender(IOptions<AuthMessageSenderOptions> optionsAccessor)
+        public EmailSender(IOptions<EmailAuthOptions> optionsAccessor)
         {
             Options = optionsAccessor.Value;
         }
 
-        public AuthMessageSenderOptions Options { get; } 
+        public EmailAuthOptions Options { get; } 
 
         public async Task SendEmailAsync(string email, string subject, string message)
         {
@@ -31,7 +29,7 @@ namespace Sokudo.Email.Service
 
             using (var client = new SmtpClient())
             {
-                await client.ConnectAsync(Options.SmtpServer, 25, false);
+                await client.ConnectAsync(Options.SmtpServer, Options.SmtpServerPort, true);
                 await client.AuthenticateAsync(Options.SenderEmail, Options.SenderEmailPassword);
                 await client.SendAsync(emailMessage);
 
