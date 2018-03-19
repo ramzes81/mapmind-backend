@@ -32,6 +32,14 @@
     using Swashbuckle.AspNetCore.Swagger;
     using Sokudo.Email.Options;
     using Sokudo.Email.Service;
+    using Newtonsoft.Json.Serialization;
+    using Sokudo.Service.Transport;
+    using Sokudo.Domain.Transport;
+    using AspNetCoreIdentityBoilerplate.Service;
+    using Sokudo.DataAccess.Repository.Transport;
+    using Sokudo.DataAccess.UnitOfWork;
+    using AspNetCoreIdentityBoilerplate.UnitOfWork;
+    using Sokudo.Service.Account;
 
     public static partial class ServiceCollectionExtensions
     {
@@ -49,23 +57,23 @@
                 // Adds IDistributedCache which is a distributed cache shared between multiple servers. This adds a
                 // default implementation of IDistributedCache which is not distributed. See below:
                 .AddDistributedMemoryCache();
-                // Uncomment the following line to use the Redis implementation of IDistributedCache. This will
-                // override any previously registered IDistributedCache service.
-                // Redis is a very fast cache provider and the recommended distributed cache provider.
-                // .AddDistributedRedisCache(
-                //     options =>
-                //     {
-                //     });
-                // Uncomment the following line to use the Microsoft SQL Server implementation of IDistributedCache.
-                // Note that this would require setting up the session state database.
-                // Redis is the preferred cache implementation but you can use SQL Server if you don't have an alternative.
-                // .AddSqlServerCache(
-                //     x =>
-                //     {
-                //         x.ConnectionString = "Server=.;Database=ASPNET5SessionState;Trusted_Connection=True;";
-                //         x.SchemaName = "dbo";
-                //         x.TableName = "Sessions";
-                //     });
+        // Uncomment the following line to use the Redis implementation of IDistributedCache. This will
+        // override any previously registered IDistributedCache service.
+        // Redis is a very fast cache provider and the recommended distributed cache provider.
+        // .AddDistributedRedisCache(
+        //     options =>
+        //     {
+        //     });
+        // Uncomment the following line to use the Microsoft SQL Server implementation of IDistributedCache.
+        // Note that this would require setting up the session state database.
+        // Redis is the preferred cache implementation but you can use SQL Server if you don't have an alternative.
+        // .AddSqlServerCache(
+        //     x =>
+        //     {
+        //         x.ConnectionString = "Server=.;Database=ASPNET5SessionState;Trusted_Connection=True;";
+        //         x.SchemaName = "dbo";
+        //         x.TableName = "Sessions";
+        //     });
 
         /// <summary>
         /// Configures the settings by binding the contents of the appsettings.json file to the specified Plain Old CLR
@@ -76,7 +84,11 @@
             IConfiguration configuration) =>
             services
                 // Adds IOptions<CacheProfileSettings> to the services container.
-                .Configure<CacheProfileSettings>(configuration.GetSection(nameof(CacheProfileSettings)));
+                .Configure<CacheProfileSettings>(configuration.GetSection(nameof(CacheProfileSettings)))
+                .Configure<EmailAuthOptions>(configuration.GetSection(nameof(EmailAuthOptions)))
+                .Configure<HostSettings>(configuration.GetSection(nameof(HostSettings)))
+                .Configure<EmailConfirmationSettings>(configuration.GetSection(nameof(EmailConfirmationSettings)))
+                .Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
 
         /// <summary>
         /// Adds response compression to enable GZIP compression of responses.
@@ -164,7 +176,9 @@
                 {
                     // Parse dates as DateTimeOffset values by default. You should prefer using DateTimeOffset over
                     // DateTime everywhere. Not doing so can cause problems with time-zones.
+                    //options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                     options.SerializerSettings.DateParseHandling = DateParseHandling.DateTimeOffset;
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                     // Output enumeration values as strings in JSON.
                     options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 });
@@ -184,7 +198,8 @@
                         x => x
                             .AllowAnyOrigin()
                             .AllowAnyMethod()
-                            .AllowAnyHeader());
+                            .AllowAnyHeader()
+                            .AllowCredentials());
                 });
 
         /// <summary>
@@ -201,6 +216,14 @@
                     options.DescribeAllEnumsAsStrings();
                     options.DescribeAllParametersInCamelCase();
                     options.DescribeStringEnumsInCamelCase();
+
+                    options.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                    {
+                        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        Name = "Authorization",
+                        In = "header",
+                        Type = "apiKey",
+                    });
 
                     // Add the XML comment file for this assembly, so it's contents can be displayed.
                     options.IncludeXmlCommentsIfExists(assembly);
@@ -231,18 +254,22 @@
         /// </summary>
         public static IServiceCollection AddRepositories(this IServiceCollection services) =>
             services
-                .AddScoped<ICarRepository, CarRepository>();
+                .AddScoped<IUnitOfWork, UnitOfWork>();
+                //.AddScoped<ICarRepository, CarRepository>()
+                //.AddScoped<ITransportDefinitionRepository, TransportDefinitionRepository>();
 
         /// <summary>
         /// Adds project services.
         /// </summary>
         public static IServiceCollection AddServices(this IServiceCollection services) =>
             services
+                .AddSingleton<IJwtFactory, JwtFactory>()
                 .AddSingleton<IClockService, ClockService>()
                 .AddSingleton<IEmailSender, EmailSender>()
-                .AddSingleton<IEmailService, EmailService>();
-
-        public static IServiceCollection AddOptions(this IServiceCollection services, IConfigurationRoot configuration) =>
-            services.Configure<AuthMessageSenderOptions>(configuration);
+                .AddSingleton<IEmailService, EmailService>()
+                .AddScoped<ITransportDefinitionService, TransportDefinitionService>()
+                .AddScoped<ITransportManufacturerService, TransportManufacturerService>()
+                .AddScoped<ITransportModelService, TransportModelService>()
+                .AddScoped<IEmailConfirmationService, EmailConfirmationService>();
     }
 }

@@ -36,9 +36,11 @@
   <ItemGroup Label="Package References">
     <PackageReference Include="Boilerplate.AspNetCore" Version="3.0.0" />
     <PackageReference Include="Boilerplate.AspNetCore.Swagger" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.CookiePolicy" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.ApiExplorer" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Cors" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.2" />
@@ -82,6 +84,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Sokudo.DataAccess\Sokudo.DataAccess.csproj" />
     <ProjectReference Include="..\Sokudo.Email\Sokudo.Email.csproj" />
+    <ProjectReference Include="..\Sokudo.Service\Sokudo.Service.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Response\User\" />
   </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">

@@ -22,7 +22,9 @@ namespace Sokudo.Api
             IHostingEnvironment hostingEnvironment = null;
             var host = new WebHostBuilder()
                 .UseConfiguration(configuration)
+                .UseSetting("detailedErrors", "true")
                 .UseContentRoot(Directory.GetCurrentDirectory())
+                .CaptureStartupErrors(true)
                 .ConfigureServices(
                     services =>
                     {

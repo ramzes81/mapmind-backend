@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AspNetCoreIdentityBoilerplate.Context;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Sokudo.Domain.Authentication;
+using Sokudo.Domain.Transport;
 
 namespace Sokudo.DataAccess.Context
 {
-    public class SokudoContext : IdentityDbContext<User>
+    public class SokudoContext : BaseIdentityDbContext<User>
     {
         public SokudoContext(DbContextOptions<SokudoContext> options) : base(options)
         {
@@ -15,13 +17,11 @@ namespace Sokudo.DataAccess.Context
         {
             base.OnModelCreating(modelBuilder);
             //identity entities
-            modelBuilder.Entity<User>().ToTable("Users");
-            modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
-            modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
-            modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
-            modelBuilder.Entity<IdentityRole>().ToTable("Roles");
-            modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
-            modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
+            ConfigureDefaultIdentityTables(modelBuilder);
+
+            modelBuilder.Entity<TransportDefinition>().ToTable("TransportDefinitions");
         }
+
+        DbSet<TransportDefinition> TransportDefinitions { get; set; }
     }
 }

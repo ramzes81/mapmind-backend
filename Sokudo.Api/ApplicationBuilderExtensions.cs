@@ -4,9 +4,14 @@
     using System.Linq;
     using Boilerplate.AspNetCore;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using Sokudo.Api.Constants;
     using Sokudo.Api.Settings;
+    using Sokudo.DataAccess.Context;
+    using Sokudo.Domain.Authentication;
 
     public static partial class ApplicationBuilderExtensions
     {
@@ -68,5 +73,40 @@
         /// </summary>
         public static IApplicationBuilder UseStrictTransportSecurityHttpHeader(this IApplicationBuilder application) =>
             application.UseHsts(options => options.MaxAge(days: 18 * 7).IncludeSubdomains().Preload());
+
+        public static IApplicationBuilder SeedDatabase(this IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices
+              .GetRequiredService<IServiceScopeFactory>()
+              .CreateScope())
+            {
+                var dbContext = serviceScope.ServiceProvider.GetService<SokudoContext>();
+                dbContext.Database.Migrate();
+
+                var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
+
+                if (roleManager.FindByNameAsync(UserRoles.Admin).Result == null)
+                {
+                    var createResult = 
+                        roleManager.CreateAsync(new IdentityRole(UserRoles.Admin)).Result;
+                }
+                if (roleManager.FindByNameAsync(UserRoles.User).Result == null)
+                {
+                    var createResult =
+                        roleManager.CreateAsync(new IdentityRole(UserRoles.User)).Result;
+                }
+                if (roleManager.FindByNameAsync(UserRoles.Passenger).Result == null)
+                {
+                    var createResult =
+                        roleManager.CreateAsync(new IdentityRole(UserRoles.Passenger)).Result;
+                }
+                if (roleManager.FindByNameAsync(UserRoles.Driver).Result == null)
+                {
+                    var createResult =
+                        roleManager.CreateAsync(new IdentityRole(UserRoles.Driver)).Result;
+                }
+            }
+            return app;
+        }
     }
 }
