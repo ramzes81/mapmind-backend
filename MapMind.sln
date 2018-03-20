@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2024
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMind.Api", "MapMind.Api\MapMind.Api.csproj", "{512DA0FD-F2DD-4727-AB14-D6B3443B1A4F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMind.DataAccess", "MapMind.DataAccess\MapMind.DataAccess.csproj", "{3584388C-0196-4DEE-90FC-68EDFA1002E6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMind.Domain", "MapMind.Domain\MapMind.Domain.csproj", "{0CB31FB4-6184-4612-8578-F35EB3BD6EED}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMind.Email", "MapMind.Email\MapMind.Email.csproj", "{9D31F2CA-E0F8-4381-A700-1987CDDF45E6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapMind.Service", "MapMind.Service\MapMind.Service.csproj", "{CE012046-D81E-46F5-9C92-37BCEBE3785D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreIdentityBoilerplate", "..\..\..\..\..\startups\AspNetCoreIdentityBoilerplate\AspNetCoreIdentityBoilerplate\AspNetCoreIdentityBoilerplate.csproj", "{13135E79-F8AB-49F5-B250-1F5DE0297BF7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{512DA0FD-F2DD-4727-AB14-D6B3443B1A4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{512DA0FD-F2DD-4727-AB14-D6B3443B1A4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{512DA0FD-F2DD-4727-AB14-D6B3443B1A4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{512DA0FD-F2DD-4727-AB14-D6B3443B1A4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3584388C-0196-4DEE-90FC-68EDFA1002E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3584388C-0196-4DEE-90FC-68EDFA1002E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3584388C-0196-4DEE-90FC-68EDFA1002E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3584388C-0196-4DEE-90FC-68EDFA1002E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CB31FB4-6184-4612-8578-F35EB3BD6EED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CB31FB4-6184-4612-8578-F35EB3BD6EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CB31FB4-6184-4612-8578-F35EB3BD6EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CB31FB4-6184-4612-8578-F35EB3BD6EED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D31F2CA-E0F8-4381-A700-1987CDDF45E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D31F2CA-E0F8-4381-A700-1987CDDF45E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D31F2CA-E0F8-4381-A700-1987CDDF45E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D31F2CA-E0F8-4381-A700-1987CDDF45E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE012046-D81E-46F5-9C92-37BCEBE3785D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE012046-D81E-46F5-9C92-37BCEBE3785D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE012046-D81E-46F5-9C92-37BCEBE3785D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE012046-D81E-46F5-9C92-37BCEBE3785D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13135E79-F8AB-49F5-B250-1F5DE0297BF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13135E79-F8AB-49F5-B250-1F5DE0297BF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13135E79-F8AB-49F5-B250-1F5DE0297BF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13135E79-F8AB-49F5-B250-1F5DE0297BF7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {36E8CF96-5883-4F22-9E9D-820E5FE00FF7}
+	EndGlobalSection
+EndGlobal
