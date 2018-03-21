@@ -14,6 +14,7 @@ using MapMind.DataAccess.UnitOfWork;
 using MapMind.Email.Options;
 using MapMind.Email.Service;
 using MapMind.Service.Account;
+using MapMind.Service.Map;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -259,6 +260,8 @@ namespace MapMind.Api
                 .AddSingleton<IClockService, ClockService>()
                 .AddSingleton<IEmailSender, EmailSender>()
                 .AddSingleton<IEmailService, EmailService>()
-                .AddScoped<IEmailConfirmationService, EmailConfirmationService>();
+                .AddScoped<IEmailConfirmationService, EmailConfirmationService>()
+                .AddScoped<IMapNodeService, MapNodeService>()
+                .AddScoped<IMindMapService, MindMapService>();
     }
 }

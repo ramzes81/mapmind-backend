@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using AspNetCoreIdentityBoilerplate.Repository;
 using AspNetCoreIdentityBoilerplate.UnitOfWork;
 using MapMind.DataAccess.Context;
+using MapMind.DataAccess.Repository.Map;
+using MapMind.Domain.Map;
 using Microsoft.EntityFrameworkCore;
 
 namespace MapMind.DataAccess.UnitOfWork
@@ -11,6 +13,8 @@ namespace MapMind.DataAccess.UnitOfWork
     {
         private static readonly Dictionary<Type, Type> EntityToRepositoryMap = new Dictionary<Type, Type>
         {
+            {typeof(MindMap), typeof(MindMapRepository)},
+            {typeof(MapNode), typeof(MapNodeRepository)},
         };
 
         public UnitOfWork(MapMindContext dbContext) : base(dbContext)
