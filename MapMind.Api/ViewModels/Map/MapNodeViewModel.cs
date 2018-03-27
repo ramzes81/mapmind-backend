@@ -10,7 +10,7 @@ namespace MapMind.Api.ViewModels.Map
     public class MapNodeViewModel: PlainMapNodeViewModel
     {
         public PlainMapNodeViewModel Parent { get; set; }
-        public ICollection<PlainMapNodeViewModel> Chidren { get; set; }
+        public ICollection<PlainMapNodeViewModel> Children { get; set; }
 
         public class MapNodeViewModelProfile : Profile
         {
