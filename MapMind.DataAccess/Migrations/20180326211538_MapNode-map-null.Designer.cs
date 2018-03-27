@@ -11,9 +11,10 @@ using System;
 namespace MapMind.DataAccess.Migrations
 {
     [DbContext(typeof(MapMindContext))]
-    partial class MapMindContextModelSnapshot : ModelSnapshot
+    [Migration("20180326211538_MapNode-map-null")]
+    partial class MapNodemapnull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

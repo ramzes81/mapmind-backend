@@ -11,9 +11,10 @@ using System;
 namespace MapMind.DataAccess.Migrations
 {
     [DbContext(typeof(MapMindContext))]
-    partial class MapMindContextModelSnapshot : ModelSnapshot
+    [Migration("20180326204109_Parent-null")]
+    partial class Parentnull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,7 +85,7 @@ namespace MapMind.DataAccess.Migrations
 
                     b.Property<string>("Color");
 
-                    b.Property<int?>("MapId");
+                    b.Property<int>("MapId");
 
                     b.Property<int?>("ParentId");
 
@@ -93,8 +94,7 @@ namespace MapMind.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("MapId")
-                        .IsUnique()
-                        .HasFilter("[MapId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("ParentId");
 

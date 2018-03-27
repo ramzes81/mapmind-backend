@@ -19,7 +19,7 @@ namespace MapMind.Email.Service
         {
             var emailMessage = new MimeMessage();
 
-            emailMessage.From.Add(new MailboxAddress("Sokudo", "noreply@sokudo.ml"));
+            emailMessage.From.Add(new MailboxAddress("Mapmind", "no-reply@mapmind.io"));
             emailMessage.To.Add(new MailboxAddress("", email));
             emailMessage.Subject = subject;
             emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)

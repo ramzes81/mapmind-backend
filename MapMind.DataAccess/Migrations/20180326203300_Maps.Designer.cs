@@ -11,9 +11,10 @@ using System;
 namespace MapMind.DataAccess.Migrations
 {
     [DbContext(typeof(MapMindContext))]
-    partial class MapMindContextModelSnapshot : ModelSnapshot
+    [Migration("20180326203300_Maps")]
+    partial class Maps
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,21 +85,20 @@ namespace MapMind.DataAccess.Migrations
 
                     b.Property<string>("Color");
 
-                    b.Property<int?>("MapId");
+                    b.Property<int>("MapId");
 
-                    b.Property<int?>("ParentId");
+                    b.Property<int>("ParentId");
 
                     b.Property<string>("Text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MapId")
-                        .IsUnique()
-                        .HasFilter("[MapId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("MapNodes");
+                    b.ToTable("MapNode");
                 });
 
             modelBuilder.Entity("MapMind.Domain.Map.MindMap", b =>
@@ -114,7 +114,7 @@ namespace MapMind.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Maps");
+                    b.ToTable("MindMap");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
