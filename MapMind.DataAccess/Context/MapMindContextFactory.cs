@@ -6,7 +6,7 @@ namespace MapMind.DataAccess.Context
     public class MapMindContextFactory : IDesignTimeDbContextFactory<MapMindContext>
     {
         private const string ConnectionString =
-            "Server=.,1433;Initial Catalog=MapMind;Persist Security Info=False;User ID=user;" +
+            "Server=.;Initial Catalog=MapMind;Persist Security Info=False;User ID=user;" +
             "Password=password;MultipleActiveResultSets=True;Encrypt=True;" +
             "TrustServerCertificate=True;Connection Timeout=30;";
 
